@@ -1,0 +1,43 @@
+name: Bug
+description: Four lines, then /bug can start
+title: "bug: <short description>"
+labels: ["bug"]
+body:
+  - type: input
+    id: what
+    attributes:
+      label: What happened
+      placeholder: user clicked Save, the record was stored with an empty title
+    validations:
+      required: true
+  - type: input
+    id: expected
+    attributes:
+      label: Expected
+      placeholder: the typed title is stored
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      placeholder: seed account, open item 4, type a title, click Save
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where seen
+      placeholder: prod, 2026-11-20, trace abc123
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - blocks a customer (hotfix now)
+        - wrong result, has a workaround
+        - cosmetic
+    validations:
+      required: true

@@ -1,0 +1,33 @@
+name: Feature
+description: One feature, becomes one spec and one branch
+title: "<NN>-<slug>: <short name>"
+labels: ["feature"]
+body:
+  - type: textarea
+    id: brief
+    attributes:
+      label: Brief
+      description: One to three sentences. What, for whom, why now.
+      placeholder: Team invitations. An owner invites teammates by email and they land in the workspace with a role. Needed before any shared data exists.
+    validations:
+      required: true
+  - type: input
+    id: prd
+    attributes:
+      label: PRD story
+      description: The user story in docs/prd/PRD.md this covers
+      placeholder: "Owner: invite teammates"
+  - type: input
+    id: week
+    attributes:
+      label: Plan week
+      placeholder: "2"
+  - type: input
+    id: figma
+    attributes:
+      label: Design frame
+      placeholder: https://www.figma.com/...
+  - type: textarea
+    id: notes
+    attributes:
+      label: Known constraints or open questions

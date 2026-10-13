@@ -1,0 +1,11 @@
+.DS_Store
+# upstream reference clone of addyosmani/agent-skills; selected skills are copied into .claude/
+agent-skills/
+# runtime
+.env
+.env.*
+!.env.example
+node_modules/
+__pycache__/
+.venv/
+dist/
