@@ -4,6 +4,10 @@ input=$(cat)
 cmd=$(printf '%s' "$input" | /usr/bin/python3 -I -c 'import json,sys; print(json.load(sys.stdin).get("tool_input",{}).get("command",""))' 2>/dev/null)
 [ -z "$cmd" ] && exit 0
 branch=$(git -C "${CLAUDE_PROJECT_DIR:-.}" branch --show-current 2>/dev/null)
+# The documented bypass for setup commits: ALLOW_MAIN_COMMIT=1 either in the hook's environment
+# or as a prefix in the command itself ("ALLOW_MAIN_COMMIT=1 git commit ..."), since Claude's Bash tool
+# cannot set the hook's environment.
+if printf '%s' "$cmd" | grep -qE '(^|[;&|]\s*)(env\s+)?ALLOW_MAIN_COMMIT=1\s'; then ALLOW_MAIN_COMMIT=1; fi
 
 if printf '%s' "$cmd" | grep -qE '(^|[;&|]\s*)git\s+push\b.*(--force|-f\b|--force-with-lease)'; then
   echo "Blocked: force push is not allowed in this repo." >&2; exit 2

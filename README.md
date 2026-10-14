@@ -1,6 +1,6 @@
 # claude-workflow
 
-A reusable Claude Code workflow for small product teams: spec, plan, build, review, ship, with hooks that enforce the rules the harness can check. Extracted from `hytyde-forms` and stripped of product specifics so it drops into any repo.
+A reusable Claude Code workflow for small product teams: spec, plan, build, review, ship, with hooks that enforce the rules the harness can check. Extracted from `hytyde-forms` and stripped of product specifics so it drops into any repo. The skills, agents and references come from [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) (MIT); see [Upstream and credits](#upstream-and-credits).
 
 ## Install into a project
 
@@ -23,7 +23,7 @@ Then, in the target project:
 | Path | What it holds |
 | --- | --- |
 | `.claude/commands/` | Slash commands: `/feature`, `/bug`, `/spec`, `/plan`, `/build`, `/quality-review`, `/ship`, `/constraints`, `/test` |
-| `.claude/skills/` | 18 process skills selected from [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) |
+| `.claude/skills/` | 18 process skills selected from [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills), see `skills/README.md` |
 | `.claude/agents/` | Subagent personas for `/ship`: code-reviewer, security-auditor, test-engineer |
 | `.claude/references/` | Checklists the skills and agents cite: definition of done, security, performance, accessibility, observability, testing, orchestration |
 | `.claude/hooks/` | Guards and gates, configured by `config.sh` (see below) |
@@ -81,4 +81,17 @@ UPSTREAM_SKILLS_DIR="agent-skills"
 
 The template is the source. When a command, hook or guide improves in one project, port the change here first, then run the installer with `--force --only claude` in the other projects and review the diff. Project-specific files (`CLAUDE.md`, `config.sh`, the plan) are never force-copied in practice: use `--only claude` for the shared parts.
 
-Skills come from the upstream repo. To refresh them, clone `addyosmani/agent-skills` and copy the selected skill folders over `template/.claude/skills/`.
+## Upstream and credits
+
+The process layer is built on **[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills)** by Addy Osmani, "production-grade engineering skills for AI coding agents", MIT licensed. The license text is in `licenses/agent-skills-MIT.txt`, and `template/.claude/skills/README.md` carries the attribution into each installed project.
+
+Taken from upstream, unchanged unless noted:
+
+- `template/.claude/skills/`: 18 of the 25 skills. Not selected: browser-testing-with-devtools, code-simplification, deprecation-and-migration, doubt-driven-development, idea-refine, performance-optimization, using-agent-skills.
+- `template/.claude/agents/`: the three personas. One link fixed to point at `references/orchestration-patterns.md`.
+- `template/.claude/references/`: the seven checklists.
+- `template/.claude/commands/`: `build`, `plan`, `spec`, `quality-review`, `ship`, `constraints`, `test` started from the upstream commands and were adapted to the spec folder layout and approval gates. `feature` and `bug` are original.
+
+Original to this repo: the hooks, `config.sh`, the SWE guides, the spec and ADR templates, the issue forms and the installer.
+
+Last synced with upstream commit `aeac41d4d005999432bb7312f7ff06383a91d59d` (2026-10-13). To refresh: clone upstream, copy the selected folders from its `skills/`, `agents/` and `references/` over `template/.claude/`, review the diff, update the commit hash here and in `template/.claude/skills/README.md`.
