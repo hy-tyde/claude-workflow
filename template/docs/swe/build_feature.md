@@ -18,14 +18,30 @@ Commit messages: `type(scope): summary (T003, 05-invitations)`. Squash title: `0
 
 ## Shortcut
 
-Steps 3 to 9 collapse into two commands:
+Steps 3 to 12 collapse into three commands:
 
 ```
 /feature Team invitations: owner invites by email, invitee lands in the workspace with a role
    ... edit the spec, set Status: approved ...
 /feature continue        writes plan and tasks, stops once for approval
-/feature continue        builds every task, reviews, pushes, opens the PR
+/feature continue        builds every task, then runs every stage to the PR
+   ... squash-merge in GitHub ...
+/feature close           confirms the live check, prints the cleanup commands
 ```
+
+`/feature continue` runs the repo's other commands in this order and records each one in a `## Pipeline` table in `tasks.md`:
+
+| Stage | Command | Stops when |
+| --- | --- | --- |
+| Plan | `/plan` | always, for your approval |
+| Build | `/build auto`, with `/test` inside every task | a test cannot pass, the spec is silent, or the task touches auth, secrets, migrations or deploy |
+| Verify | `make test`, `make lint`, `make e2e`, `make eval` | red after one fix attempt |
+| Guard | `/constraints guard`, `/constraints check` | the bar was weakened and the fix needs you |
+| Review | `/quality-review`, then `/code-review` | never, findings are fixed or listed in the PR |
+| Ship | `/ship` for anything beyond a two-file, fifty-line change away from auth, data, config or deploy | NO-GO |
+| PR | push, `gh pr create` | always, merging is yours |
+
+`/feature status` prints where the branch stands and the next command.
 
 The long form below is what the command does, and what to run by hand when one step needs attention.
 
@@ -78,28 +94,32 @@ Read `tasks.md`. Reorder, cut, or split tasks. Say "approve". Hedged answers do 
 /build auto
 ```
 
-For each task in order Claude: writes a failing test named after the FR it covers, writes the minimum code, runs `make test`, `make lint` and the build, commits as `feat(invitations): ... (T003, 05-invitations)`, ticks the task. AI agent tasks also need the evals green.
+For each task in order Claude runs the `/test` loop: writes a failing test named after the FR it covers, writes the minimum code, runs `make test`, `make lint` and the build, commits as `feat(invitations): ... (T003, 05-invitations)`, ticks the task. AI agent tasks also need the evals green.
 
 Claude stops and asks only when a test will not pass, the spec is silent on a decision, or the task touches auth, secrets, migrations beyond the spec, or deploy. After you answer, run `/build auto` again and it resumes from the next open task.
 
 To watch each task, use `/build` without `auto`. One task per call.
 
-### 8. Review
+### 8. Guard, review, ship
 
 ```
+/constraints guard
+/constraints check
 /quality-review
+/code-review
+/ship
 ```
 
-Five axes: correctness, readability, architecture, security, performance. Claude fixes what it finds. Then run the built-in `/code-review` for a second opinion. Read the summary and only the files it flags.
+Guard inspects the branch diff for a weakened bar: lowered thresholds, skipped or deleted tests, new suppression comments, stubs. Check runs `CONSTRAINTS.md` against the branch; without that file it is a reminder to run `/constraints`. Review covers five axes: correctness, readability, architecture, security, performance. Claude fixes what it finds, then the built-in `/code-review` gives a second opinion. Ship fans out to the code reviewer, security auditor and test engineer and ends in a GO or NO-GO with a rollback plan; it is skipped only for a change under two files and fifty lines that touches none of auth, data access, migrations, config or deploy. Read the summaries and only the files they flag.
 
 ### 9. Open the PR
 
 ```
 git push -u origin features/05-invitations
-gh pr create --title "05-invitations: invite teammates by email with a role" --body "Spec: docs/specs/05-invitations/spec.md"
+gh pr create --title "05-invitations: invite teammates by email with a role" --body-file /tmp/pr.md   # Spec: docs/specs/05-invitations/spec.md, Closes #<issue>, tests, guard, review, ship decision
 ```
 
-CI runs lint, tests, codegen drift, migration head check, build. Red CI means back to step 7.
+CI runs lint, tests, codegen drift, migration head check, build. The PR body carries the spec link, `Closes #<issue>`, the tests added with their results, the guard result, the review findings fixed and left open, and the ship decision. Red CI means back to step 7.
 
 ### 10. Merge
 
@@ -111,11 +131,17 @@ Open the prod URL and do what the spec promised. For AI features also open the t
 
 ### 12. Close
 
-Set `Status: implemented` in the spec. Remove the worktree and branch:
+```
+/feature close
+```
+
+Claude checks that the PR is merged, runs the live checks from the spec's success criteria (asking you to confirm the ones that need a browser), turns a failed check into a `/bug` line, and prints the cleanup:
 
 ```
-git worktree remove ../<repo>-05 && git branch -d features/05-invitations
+cd <main checkout> && git pull && git worktree remove ../<repo>-05 && git branch -d features/05-invitations
 ```
+
+`Status: implemented` was set with the PR in step 9, so the squash merge carries it to `main`.
 
 If a decision was made that the plan did not cover, the ADR was written in step 7 and merged with the feature.
 

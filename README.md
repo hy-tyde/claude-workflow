@@ -39,13 +39,16 @@ Then, in the target project:
 
 ```
 /feature <brief>|#N    spec from a brief or a GitHub issue, then stop
-/feature continue      plan (stop once), build all tasks, review, open PR
+/feature continue      plan (stop once), build, verify, guard, review, ship, open PR
+/feature close         after the merge: live checks, cleanup commands
+/feature status        where the branch stands and the next command
 /bug <report>|#N       reproduce, failing test, fix, review, PR
 /spec <NN>-<slug>      write the spec, stop for approval
 /plan                  plan.md and tasks.md from an approved spec
 /build                 next task, test first, one commit
 /build auto            whole task list after one approval
 /quality-review        five-axis review before merge
+/constraints guard     catch a weakened quality bar in the diff
 /ship                  pre-launch checklist and go/no-go
 /constraints           set or check the quality bar in CONSTRAINTS.md
 /test                  TDD loop for a single change or bug

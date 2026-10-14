@@ -10,7 +10,7 @@
 
 ## Workflow
 
-`/spec` then stop for approval. `/plan` then stop. `/build` one task, or `/build auto` after a single approval. `/quality-review` before merge. Specs live in `docs/specs/<NN>-<slug>/` as `spec.md`, `plan.md`, `tasks.md`, never `SPEC.md` at the root. Step-by-step: `docs/swe/build_feature.md` and `docs/swe/fix_bug.md`. Branches: `features/NN-slug` or `bugs/slug` from `main`, one commit per task, squash-merge, never commit directly to `main` for feature or fix work.
+`/feature <brief>` writes the spec and stops. `/feature continue` runs plan (stop for approval), build, test, constraints, review, ship and the PR. `/feature close` after the merge. Long form: `/spec`, `/plan`, `/build` or `/build auto`, `/test`, `/constraints guard`, `/quality-review`, `/code-review`, `/ship`. Specs live in `docs/specs/<NN>-<slug>/` as `spec.md`, `plan.md`, `tasks.md`, never `SPEC.md` at the root. Step-by-step: `docs/swe/build_feature.md` and `docs/swe/fix_bug.md`. Branches: `features/NN-slug` or `bugs/slug` from `main`, one commit per task, squash-merge, never commit directly to `main` for feature or fix work.
 
 ## Commands
 
